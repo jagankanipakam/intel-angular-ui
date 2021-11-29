@@ -1,0 +1,98 @@
+<div class="container">
+  <div
+    *ngIf="minCardLength"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
+    <strong>Minimum 2 cards required for sorting!</strong>
+    <button
+      (click)="minCardLength = !minCardLength"
+      type="button"
+      class="close"
+      data-dismiss="alert"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div
+    *ngIf="serverError"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
+    <strong>Internal Server Error!</strong> Please try again later.
+    <button
+      (click)="serverError = ''"
+      type="button"
+      class="close"
+      data-dismiss="alert"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <h2>Sort Poker Cards</h2>
+
+  <angular2-multiselect
+    [data]="itemList"
+    [(ngModel)]="selectedItems"
+    [settings]="dropdownSettings"
+  >
+    <c-badge>
+      <ng-template let-item="item">
+        <label class="m-0">{{ item.itemName }}</label>
+        <ng-container
+          *ngTemplateOutlet="suites; context: { suiteVal: item.suite }"
+        ></ng-container>
+      </ng-template>
+    </c-badge>
+    <c-item>
+      <ng-template let-item="item">
+        <label class="option"
+          >{{ item.itemName }}
+          <ng-container
+            *ngTemplateOutlet="suites; context: { suiteVal: item.suite }"
+          ></ng-container
+        ></label>
+      </ng-template>
+    </c-item>
+  </angular2-multiselect>
+  <br />
+  <button
+    data-toggle="button"
+    aria-pressed="false"
+    type="button"
+    class="btn btn-primary btn-lg btn-block"
+    (click)="sortCards()"
+    [disabled]="sortBtnDisable"
+  >
+    Sort Cards
+    <span *ngIf="sortBtnDisable" class="spinner-grow spinner-grow-sm"></span>
+  </button>
+</div>
+<br />
+<div class="container">
+  <div id="deck" class="deck">
+    <div *ngFor="let card of sortedCards" class="card">
+      <div class="value">{{ card.value }}</div>
+      <div
+        [ngClass]="{
+          diamonds: card.suite == 'd',
+          clubs: card.suite == 'c',
+          spades: card.suite == 's',
+          hearts: card.suite == 'h'
+        }"
+        class="suit"
+      ></div>
+    </div>
+  </div>
+</div>
+
+<ng-template let-suiteVal="suiteVal" #suites>
+  <span [ngSwitch]="suiteVal" class="pl-10">
+    <span *ngSwitchCase="'d'" class="color-red">&diams;</span>
+    <span *ngSwitchCase="'h'" class="color-red">&hearts;</span>
+    <span *ngSwitchCase="'s'" class="color-black">&spades;</span>
+    <span *ngSwitchDefault class="color-black"> &clubs;</span>
+  </span>
+</ng-template>
