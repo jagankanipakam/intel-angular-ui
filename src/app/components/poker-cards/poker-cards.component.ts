@@ -40,10 +40,8 @@ export class PokerCardsComponent implements OnInit {
       this._pokerCardsService.sortPokerCards(reqBody).subscribe(
         (res) => {
           this.sortedCards = res;
-          console.log('this.sortedCards: ', this.sortedCards);
         },
         (err) => {
-          console.log('err: ', err);
           this.sortedCards = [];
           this.serverError = 'Internal Server Error';
           this.sortBtnDisable = false;
