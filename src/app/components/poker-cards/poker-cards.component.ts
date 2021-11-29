@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Card } from 'src/app/models/card';
 import { ItemList } from 'src/app/models/itemlist';
+import { Suit } from 'src/app/models/suit.enum';
+import { Values } from 'src/app/models/values.enum';
 import { PokerCardsService } from 'src/app/services/poker-cards.service';
 import { Subscription } from 'rxjs';
 
@@ -88,25 +90,4 @@ export class PokerCardsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.sortCardSubscription && this.sortCardSubscription.unsubscribe();
   }
-}
-enum Suit {
-  c = 'c',
-  d = 'd',
-  h = 'h',
-  s = 's',
-}
-enum Values {
-  ace = 'A',
-  two = '2',
-  three = '3',
-  four = '4',
-  five = '5',
-  six = '6',
-  seven = '7',
-  eight = '8',
-  nine = '9',
-  ten = '10',
-  jack = 'J',
-  queen = 'Q',
-  king = 'K',
 }
