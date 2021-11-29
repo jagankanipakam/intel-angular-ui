@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Card } from 'src/app/models/card';
 import { ItemList } from 'src/app/models/itemlist';
 import { PokerCardsService } from 'src/app/services/poker-cards.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-poker-cards',
@@ -9,7 +10,7 @@ import { PokerCardsService } from 'src/app/services/poker-cards.service';
   styleUrls: ['./poker-cards.component.css'],
   providers: [PokerCardsService],
 })
-export class PokerCardsComponent implements OnInit {
+export class PokerCardsComponent implements OnInit, OnDestroy {
   itemList: ItemList[] = [];
   selectedItems: ItemList[] = [];
   dropdownSettings = {
@@ -26,6 +27,7 @@ export class PokerCardsComponent implements OnInit {
   sortBtnDisable = false;
   minCardLength = false;
   serverError = '';
+  sortCardSubscription!: Subscription;
   constructor(private _pokerCardsService: PokerCardsService) {}
 
   ngOnInit() {
@@ -37,19 +39,21 @@ export class PokerCardsComponent implements OnInit {
     if (this.selectedItems.length > 1) {
       this.sortBtnDisable = true;
       let reqBody = this.selectedItems.map((item) => item.itemName);
-      this._pokerCardsService.sortPokerCards(reqBody).subscribe(
-        (res) => {
-          this.sortedCards = res;
-        },
-        (err) => {
-          this.sortedCards = [];
-          this.serverError = 'Internal Server Error';
-          this.sortBtnDisable = false;
-        },
-        () => {
-          this.sortBtnDisable = false;
-        }
-      );
+      this.sortCardSubscription = this._pokerCardsService
+        .sortPokerCards(reqBody)
+        .subscribe(
+          (res) => {
+            this.sortedCards = res;
+          },
+          (err) => {
+            this.sortedCards = [];
+            this.serverError = 'Internal Server Error';
+            this.sortBtnDisable = false;
+          },
+          () => {
+            this.sortBtnDisable = false;
+          }
+        );
     } else {
       this.minCardLength = true;
     }
@@ -80,6 +84,9 @@ export class PokerCardsComponent implements OnInit {
         count++;
       }
     });
+  }
+  ngOnDestroy() {
+    this.sortCardSubscription && this.sortCardSubscription.unsubscribe();
   }
 }
 enum Suit {
